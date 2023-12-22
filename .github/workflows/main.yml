@@ -1,13 +1,19 @@
-name: Build & Deploy Spring App
+name: Build, Test & Deploy Spring App
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      deployToUAT:
+        description: 'Deploy to UAT (true/false)'
+        required: true
+        default: 'false'
 
 jobs:
-  build-deploy:
-    name: Build and Deploy Spring Boot App
+  build-and-test:
+    name: Build and Test
     runs-on: ubuntu-latest
 
     steps:
@@ -25,3 +31,23 @@ jobs:
 
       - name: Build the application
         run: ./gradlew clean assemble
+
+  deploy-to-qa:
+    name: Deploy to QA Environment
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to QA
+        run: echo "Deploying to QA environment"
+        # Add your actual deployment commands here
+
+  deploy-to-uat:
+    name: Deploy to UAT Environment
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.deployToUAT == 'true'
+    steps:
+      - name: Deploy to UAT
+        run: echo "Deploying to UAT environment"
+        # Add your actual deployment commands here
