@@ -1,4 +1,4 @@
-name: Multi-Environment Deployment
+name: Multi-Environment Deployment with Release Notes
 
 on:
   push:
@@ -11,6 +11,9 @@ on:
         description: 'Deploy to Production (true/false)'
         required: true
         default: 'false'
+      releaseNotes:
+        description: 'Release Notes'
+        required: false
 
 jobs:
   deploy-to-dev:
@@ -37,3 +40,14 @@ jobs:
       - uses: actions/checkout@v2
       - name: Deploy to Production
         run: echo "Deploying to Production environment" # Replace with your actual deployment script for Production
+      - name: Create Release
+        if: github.event.inputs.releaseNotes != ''
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: ${{ github.event.inputs.releaseNotes }}
+          draft: false
+          prerelease: false
