@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       deployToProd:
-        description: 'Deploy to Production (true/false)'
+        description: 'Deploy to Production (true)'
         required: true
-        default: 'false'
+        default: 'true'
       releaseNotes:
         description: 'Release Notes'
         required: false
