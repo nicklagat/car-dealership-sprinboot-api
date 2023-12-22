@@ -32,22 +32,22 @@ jobs:
       - name: Deploy to Staging
         run: echo "Deploying to Staging environment" # Replace with your actual deployment script for Staging
 
-  deploy-to-prod:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.deployToProd == 'true'
-    needs: deploy-to-staging
-    steps:
-      - uses: actions/checkout@v2
-      - name: Deploy to Production
-        run: echo "Deploying to Production environment" # Replace with your actual deployment script for Production
-      - name: Create Release
-        if: github.event.inputs.releaseNotes != ''
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: ${{ github.event.inputs.releaseNotes }}
-          draft: false
-          prerelease: false
+  # deploy-to-prod:
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'workflow_dispatch' && github.event.inputs.deployToProd == 'true'
+  #   needs: deploy-to-staging
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Deploy to Production
+  #       run: echo "Deploying to Production environment" # Replace with your actual deployment script for Production
+  #     - name: Create Release
+  #       if: github.event.inputs.releaseNotes != ''
+  #       uses: actions/create-release@v1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         tag_name: ${{ github.ref }}
+  #         release_name: Release ${{ github.ref }}
+  #         body: ${{ github.event.inputs.releaseNotes }}
+  #         draft: false
+  #         prerelease: false
