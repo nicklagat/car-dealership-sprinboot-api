@@ -1,0 +1,12 @@
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  learning-yml:
+    name: Learning Github Actions
+    runs-on: ubuntu-latest
+
