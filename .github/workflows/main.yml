@@ -32,22 +32,58 @@ jobs:
       - name: Build the application
         run: ./gradlew clean assemble
 
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: spring-app
+          path: build/libs/*.jar
+
+  cypress-tests:
+    name: Cypress Tests
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14' # Specify your Node.js version
+
+      - name: Install Cypress dependencies
+        run: npm install
+
+      - name: Run Cypress tests (Headless)
+        run: npx cypress run --headless
+        # Additional Cypress command options can be added here
+
   deploy-to-qa:
     name: Deploy to QA Environment
-    needs: build-and-test
+    needs: cypress-tests
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: spring-app
+
       - name: Deploy to QA
         run: echo "Deploying to QA environment"
-        # Add your actual deployment commands here
+        # Replace with actual deployment commands
 
   deploy-to-uat:
     name: Deploy to UAT Environment
-    needs: build-and-test
+    needs: cypress-tests
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' && github.event.inputs.deployToUAT == 'true'
     steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: spring-app
+
       - name: Deploy to UAT
         run: echo "Deploying to UAT environment"
-        # Add your actual deployment commands here
+        # Replace with actual deployment commands
